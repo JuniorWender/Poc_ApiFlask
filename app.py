@@ -38,7 +38,7 @@ def decodeJwtToken(token):
     except InvalidTokenError:
         return None
     
-@app.route('/cargoPlan', methods=['POST'])
+@app.route('/cargoPlan', methods=['POST','GET'])
 def validateJWT():
     token = request.headers.get('Authorization')
     if not token:
@@ -49,40 +49,44 @@ def validateJWT():
     payload = decodeJwtToken(token)
     if not payload:
         return jsonify({'message': 'Erro, Token Inválido'}), 401
-    
-    body = request.get_json()
-    if not body:
-        return jsonify({'message': 'Erro, Você deve enviar o corpo da requisição'}), 401
-    print('body: ',body)
 
-    validatePost(body,token)
+    if request.method == 'POST':
+        body = request.get_json()
+        if not body:
+            return jsonify({'message': 'Erro, Você deve enviar o corpo da requisição'}), 401
+        
+        print('body: ',body)
+        validatePost(body)
+
+    if request.method == 'GET':
+        #Retorna se o processo do cargo plan já foi finalizado ou não
+        verifyProcess(payload)
 
     return jsonify({'message': 'Token Valido'}), 200
 
 
 # -------------------------------- Rotas de Envio de informação para o cargoPlan --------------------------------
-def validatePost(body,token):
+def validatePost(body):
     if not body['width']:
         return jsonify({'message': 'Erro, Você deve enviar a largura'}), 400
     if not body['height']:
         return jsonify({'message': 'Erro, Você deve enviar o comprimento'}), 400
-    if not body['file']:
-        return jsonify({'message': 'Erro, Você deve enviar o arquivo'}), 400
+    # if not body['file']:
+    #     return jsonify({'message': 'Erro, Você deve enviar o arquivo'}), 400
 
     createCargoPlan(body,token)
 
 
-def createCargoPlan(body,token):
+def createCargoPlan(body):
     width = body['width']
     height = body['height']
-    file = body['file']
+    # file = body['file']
 
-    file_name = 'inputs.csv'
-    file_path = app.config['UPLOAD_PATH'] + '/' + file_name
+    # file_name = 'inputs.csv'
+    # file_path = app.config['UPLOAD_PATH'] + '/' + file_name
 
     # if not os.path.exists(file_path):
     #     os.makedirs(file_path)
-    #     os.makedirs(token)
 
     # file_path = os.path.join(app.config['UPLOAD_PATH'], file_name)
     # file.save(file_path)
@@ -90,6 +94,12 @@ def createCargoPlan(body,token):
     print('largura: ',width)
     print('comprimento: ',height)
 
+    return jsonify({'message': 'CargoPlan criado com sucesso'}), 200
+
+def verifyProcess(payload):
+    #Verifica se o processo do cargo plan já foi finalizado ou não
+    #Se já foi finalizado, retorna o arquivo de saída
+    #Se não foi finalizado, retorna uma mensagem de erro
     return jsonify({'message': 'CargoPlan criado com sucesso'}), 200
 
 
