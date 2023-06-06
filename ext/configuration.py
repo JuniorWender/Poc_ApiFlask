@@ -1,5 +1,5 @@
 import os
 
-UPLOAD_PATH = os.path.dirname(os.path.abspath(__file__)) + '/upload'
+UPLOAD_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))) , 'upload')
 
-TESTE = 'teste'
+SECRET_KEY = 'cargo_plan_application_api'
