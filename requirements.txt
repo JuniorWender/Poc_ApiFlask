@@ -1,2 +1,2 @@
-Flask
-PyJWT
+Flask==2.3.2
+PyJWT==2.7.0
