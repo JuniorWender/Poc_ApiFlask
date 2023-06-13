@@ -6,7 +6,7 @@ import jwt # Cria o token
 from jwt.exceptions import InvalidTokenError #Para lançar o erro de token inválido
 import os # Mexe com arquivos
 
-
+# --------------------------------------------------------------------------------------
 
 # navio.nome = 'Kang Cheng 1'
 # navio.quantidade_poroes = 5
@@ -22,6 +22,80 @@ import os # Mexe com arquivos
 # navio.larguras_escotilhas = [18,18,18,18,18]
 # navio.comprimentos_escotilhas = [ 17, 17,17, 17,19]
 
+# -------------------------------- Classes --------------------------------
+class Navio:
+    def __init__(self, nome, quantidade_poroes, comprimento_trapezio_proa, comprimento_retangular_proa, comprimento_trapezio_popa, comprimento_retangular_popa, largura_popa, largura_proa, meia_nau, tank_top, comprimentos_poroes, larguras_escotilhas, comprimentos_escotilhas, file):
+        self.nome = nome
+        self.quantidade_poroes = quantidade_poroes
+        self.comprimento_trapezio_proa = comprimento_trapezio_proa
+        self.comprimento_retangular_proa = comprimento_retangular_proa
+        self.comprimento_trapezio_popa = comprimento_trapezio_popa
+        self.comprimento_retangular_popa = comprimento_retangular_popa
+        self.largura_popa = largura_popa
+        self.largura_proa = largura_proa
+        self.meia_nau = meia_nau
+        self.tank_top = tank_top
+        self.comprimentos_poroes = comprimentos_poroes
+        self.larguras_escotilhas = larguras_escotilhas
+        self.comprimentos_escotilhas = comprimentos_escotilhas
+        self.file = file
+
+        @property
+        def nome(self):
+            return self.nome
+
+        # @property
+        # def getQuantidade_poroes(self):
+        #     return self.quantidade_poroes
+        
+        # @property
+        # def getComprimento_trapezio_proa(self):
+        #     return self.comprimento_trapezio_proa
+        
+        # @property
+        # def getComprimento_retangular_proa(self):
+        #     return self.comprimento_retangular_proa
+        
+        # @property
+        # def getComprimento_trapezio_popa(self):
+        #     return self.comprimento_trapezio_popa
+        
+        # @property
+        # def getComprimento_retangular_popa(self):
+        #     return self.comprimento_retangular_popa
+        
+        # @property
+        # def getLargura_popa(self):
+        #     return self.largura_popa
+        
+        # @property
+        # def getLargura_proa(self):
+        #     return self.largura_proa
+        
+        # @property
+        # def getMeia_nau(self):
+        #     return self.meia_nau
+        
+        # @property
+        # def getTank_top(self):
+        #     return self.tank_top
+        
+        # @property
+        # def getComprimentos_poroes(self):
+        #     return self.comprimentos_poroes
+        
+        # @property
+        # def getLarguras_escotilhas(self):
+        #     return self.larguras_escotilhas
+        
+        # @property
+        # def getComprimentos_escotilhas(self):
+        #     return self.comprimentos_escotilhas
+        
+        # @property
+        # def getFile(self):
+        #     return self.file
+
 
 app = Flask(__name__)
 app.config.from_object('ext.configuration')
@@ -32,58 +106,55 @@ print(app.config['UPLOAD_PATH'])
 print('-----------------------------')
 
 # -------------------------------- Rotas de Autenticação --------------------------------
-@app.route('/auth', methods=['POST'])
-def auth():
-    recived = request.get_json()
-    applicationName = recived['applicationName']
-    applicationPassword = recived['applicationPassword']
-    payload = {'user': applicationName, 'password': applicationPassword, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}
+# @app.route('/auth', methods=['POST'])
+# def auth():
+#     recived = request.get_json()
+#     applicationName = recived['applicationName']
+#     applicationPassword = recived['applicationPassword']
+#     payload = {'user': applicationName, 'password': applicationPassword, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}
 
-    print('nome: ',applicationName)
-    print('senha: ',applicationPassword)
+#     print('nome: ',applicationName)
+#     print('senha: ',applicationPassword)
 
-    jwt = createJwtToken(payload)
-    return jsonify({'token': jwt})
+#     jwt = createJwtToken(payload)
+#     return jsonify({'token': jwt})
 
-def createJwtToken(payload):
-    token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
-    return token
+# def createJwtToken(payload):
+#     token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
+#     return token
 
-def decodeJwtToken(token):
-    try:
-        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-        return payload
-    except InvalidTokenError:
-        return None
+# def decodeJwtToken(token):
+#     try:
+#         payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+#         return payload
+#     except InvalidTokenError:
+#         return None
     
 @app.route('/cargoPlan', methods=['POST','GET'])
 def validateJWT():
     
-    token = request.headers.get('Authorization')
+    # token = request.headers.get('Authorization')
 
-    if not token:
-        return jsonify({'error': 'Erro, Você deve enviar o Token'}), 401
+    # if not token:
+    #     return jsonify({'error': 'Erro, Você deve enviar o Token'}), 401
     
-    token = token.split('Bearer ')[-1]  # Remove o prefixo 'Bearer' do token
+    # token = token.split('Bearer ')[-1]  # Remove o prefixo 'Bearer' do token
 
-    payload = decodeJwtToken(token)
-    if not payload:
-        return jsonify({'message': 'Erro, Token Inválido'}), 401
+    # payload = decodeJwtToken(token)
+    # if not payload:
+    #     return jsonify({'message': 'Erro, Token Inválido'}), 401
 
     if request.method == 'POST':
-        body = request.form.to_dict()
-        file = request.files['file']
-
-        if not body:
-            return jsonify({'message': 'Erro, Você deve enviar o corpo da requisição'}), 401
-        if not file:
-            return jsonify({'message': 'Erro, Você deve enviar o arquivo'}), 401
+        Navio(request.form['nome'], request.form['quantidade_poroes'], request.form['comprimento_trapezio_proa'], request.form['comprimento_retangular_proa'], request.form['comprimento_trapezio_popa'], request.form['comprimento_retangular_popa'], request.form['largura_popa'], request.form['largura_proa'], request.form['meia_nau'], request.form['tank_top'], request.form['comprimentos_poroes'], request.form['larguras_escotilhas'], request.form['comprimentos_escotilhas'], request.files['file'])
         
-        validatePost(body)
+        print('navio', Navio.nome)
+        # print('navio',Navio.getlargura_escotilhas())
+        # print('navio',Navio.getFile())
+        # validatePost(Navio)
 
-    if request.method == 'GET':
-        #Retorna se o processo do cargo plan já foi finalizado ou não
-        verifyProcess(payload)
+    # if request.method == 'GET':
+    #     #Retorna se o processo do cargo plan já foi finalizado ou não
+    #     verifyProcess(payload)
 
     return jsonify({'message': 'Token Valido'}), 200
 
