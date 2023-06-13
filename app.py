@@ -10,8 +10,8 @@ app.config.from_object('ext.configuration')
 
 print('plot')
 print(app.config['UPLOAD_PATH'])
-print('-----------------------------')
 
+print('-----------------------------')
 
 # -------------------------------- Rotas de Autenticação --------------------------------
 @app.route('/auth', methods=['POST'])
@@ -49,18 +49,22 @@ def validateJWT():
     payload = decodeJwtToken(token)
     if not payload:
         return jsonify({'message': 'Erro, Token Inválido'}), 401
+    
+    teste = request.files['file']
 
-    if request.method == 'POST':
-        body = request.get_json()
-        if not body:
-            return jsonify({'message': 'Erro, Você deve enviar o corpo da requisição'}), 401
+    print('teste: ',teste)
+
+    # if request.method == 'POST':
+    #     body = request.get_json()
+    #     if not body:
+    #         return jsonify({'message': 'Erro, Você deve enviar o corpo da requisição'}), 401
         
-        print('body: ',body)
-        validatePost(body)
+    #     print('body: ',body)
+    #     validatePost(body)
 
-    if request.method == 'GET':
-        #Retorna se o processo do cargo plan já foi finalizado ou não
-        verifyProcess(payload)
+    # if request.method == 'GET':
+    #     #Retorna se o processo do cargo plan já foi finalizado ou não
+    #     verifyProcess(payload)
 
     return jsonify({'message': 'Token Valido'}), 200
 
@@ -74,7 +78,7 @@ def validatePost(body):
     # if not body['file']:
     #     return jsonify({'message': 'Erro, Você deve enviar o arquivo'}), 400
 
-    createCargoPlan(body,token)
+    createCargoPlan(body)
 
 
 def createCargoPlan(body):
