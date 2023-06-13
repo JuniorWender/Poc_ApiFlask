@@ -1,9 +1,27 @@
+import json
 from flask import Flask,jsonify,request
 
 import datetime
 import jwt # Cria o token
 from jwt.exceptions import InvalidTokenError #Para lançar o erro de token inválido
 import os # Mexe com arquivos
+
+
+
+# navio.nome = 'Kang Cheng 1'
+# navio.quantidade_poroes = 5
+# navio.comprimento_trapezio_proa = 28
+# navio.comprimento_retangular_proa = 10
+# navio.comprimento_trapezio_popa = 28
+# navio.comprimento_retangular_popa = 10
+# navio.largura_popa = 12
+# navio.largura_proa = 11
+# navio.meia_nau = 23
+# navio.tank_top = [25,18 ,26, 18, 25]
+# navio.comprimentos_poroes = [28,28,28,28,28]
+# navio.larguras_escotilhas = [18,18,18,18,18]
+# navio.comprimentos_escotilhas = [ 17, 17,17, 17,19]
+
 
 app = Flask(__name__)
 app.config.from_object('ext.configuration')
@@ -40,7 +58,9 @@ def decodeJwtToken(token):
     
 @app.route('/cargoPlan', methods=['POST','GET'])
 def validateJWT():
+    
     token = request.headers.get('Authorization')
+
     if not token:
         return jsonify({'error': 'Erro, Você deve enviar o Token'}), 401
     
@@ -49,22 +69,21 @@ def validateJWT():
     payload = decodeJwtToken(token)
     if not payload:
         return jsonify({'message': 'Erro, Token Inválido'}), 401
-    
-    teste = request.files['file']
 
-    print('teste: ',teste)
+    if request.method == 'POST':
+        body = request.form.to_dict()
+        file = request.files['file']
 
-    # if request.method == 'POST':
-    #     body = request.get_json()
-    #     if not body:
-    #         return jsonify({'message': 'Erro, Você deve enviar o corpo da requisição'}), 401
+        if not body:
+            return jsonify({'message': 'Erro, Você deve enviar o corpo da requisição'}), 401
+        if not file:
+            return jsonify({'message': 'Erro, Você deve enviar o arquivo'}), 401
         
-    #     print('body: ',body)
-    #     validatePost(body)
+        validatePost(body)
 
-    # if request.method == 'GET':
-    #     #Retorna se o processo do cargo plan já foi finalizado ou não
-    #     verifyProcess(payload)
+    if request.method == 'GET':
+        #Retorna se o processo do cargo plan já foi finalizado ou não
+        verifyProcess(payload)
 
     return jsonify({'message': 'Token Valido'}), 200
 
@@ -75,8 +94,6 @@ def validatePost(body):
         return jsonify({'message': 'Erro, Você deve enviar a largura'}), 400
     if not body['height']:
         return jsonify({'message': 'Erro, Você deve enviar o comprimento'}), 400
-    # if not body['file']:
-    #     return jsonify({'message': 'Erro, Você deve enviar o arquivo'}), 400
 
     createCargoPlan(body)
 
@@ -105,7 +122,6 @@ def verifyProcess(payload):
     #Se já foi finalizado, retorna o arquivo de saída
     #Se não foi finalizado, retorna uma mensagem de erro
     return jsonify({'message': 'CargoPlan criado com sucesso'}), 200
-
 
 
 if __name__ == '__main__':
