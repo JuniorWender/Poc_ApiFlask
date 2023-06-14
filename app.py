@@ -24,77 +24,20 @@ import os # Mexe com arquivos
 
 # -------------------------------- Classes --------------------------------
 class Navio:
-    def __init__(self, nome, quantidade_poroes, comprimento_trapezio_proa, comprimento_retangular_proa, comprimento_trapezio_popa, comprimento_retangular_popa, largura_popa, largura_proa, meia_nau, tank_top, comprimentos_poroes, larguras_escotilhas, comprimentos_escotilhas, file):
+    def __init__(self, nome, quantidade_poroes, comprimento_trapezio_proa, comprimento_retangular_proa, comprimento_trapezio_popa, comprimento_retangular_popa, largura_popa, largura_proa, meia_nau, tank_top, comprimentos_poroes, larguras_escotilhas, comprimentos_escotilhas):
         self.nome = nome
-        self.quantidade_poroes = quantidade_poroes
-        self.comprimento_trapezio_proa = comprimento_trapezio_proa
-        self.comprimento_retangular_proa = comprimento_retangular_proa
-        self.comprimento_trapezio_popa = comprimento_trapezio_popa
-        self.comprimento_retangular_popa = comprimento_retangular_popa
-        self.largura_popa = largura_popa
-        self.largura_proa = largura_proa
-        self.meia_nau = meia_nau
-        self.tank_top = tank_top
-        self.comprimentos_poroes = comprimentos_poroes
-        self.larguras_escotilhas = larguras_escotilhas
-        self.comprimentos_escotilhas = comprimentos_escotilhas
-        self.file = file
-
-        @property
-        def nome(self):
-            return self.nome
-
-        # @property
-        # def getQuantidade_poroes(self):
-        #     return self.quantidade_poroes
-        
-        # @property
-        # def getComprimento_trapezio_proa(self):
-        #     return self.comprimento_trapezio_proa
-        
-        # @property
-        # def getComprimento_retangular_proa(self):
-        #     return self.comprimento_retangular_proa
-        
-        # @property
-        # def getComprimento_trapezio_popa(self):
-        #     return self.comprimento_trapezio_popa
-        
-        # @property
-        # def getComprimento_retangular_popa(self):
-        #     return self.comprimento_retangular_popa
-        
-        # @property
-        # def getLargura_popa(self):
-        #     return self.largura_popa
-        
-        # @property
-        # def getLargura_proa(self):
-        #     return self.largura_proa
-        
-        # @property
-        # def getMeia_nau(self):
-        #     return self.meia_nau
-        
-        # @property
-        # def getTank_top(self):
-        #     return self.tank_top
-        
-        # @property
-        # def getComprimentos_poroes(self):
-        #     return self.comprimentos_poroes
-        
-        # @property
-        # def getLarguras_escotilhas(self):
-        #     return self.larguras_escotilhas
-        
-        # @property
-        # def getComprimentos_escotilhas(self):
-        #     return self.comprimentos_escotilhas
-        
-        # @property
-        # def getFile(self):
-        #     return self.file
+        self.quantidade_poroes = int(quantidade_poroes)
+        self.comprimento_trapezio_proa = int(comprimento_trapezio_proa)
+        self.comprimento_retangular_proa = int(comprimento_retangular_proa)
+        self.comprimento_trapezio_popa = int(comprimento_trapezio_popa)
+        self.comprimento_retangular_popa = int(comprimento_retangular_popa)
+        self.largura_popa = int(largura_popa)
+        self.largura_proa = int(largura_proa)
+        self.meia_nau = int(meia_nau)
+        self.tank_top = [int(item) for item in tank_top.strip('][').split(',')]
+        self.comprimentos_poroes = [int(item) for item in comprimentos_poroes.strip('][').split(',')]
+        self.larguras_escotilhas = [int(item) for item in larguras_escotilhas.strip('][').split(',')]
+        self.comprimentos_escotilhas = [int(item) for item in comprimentos_escotilhas.strip('][').split(',')]
 
 
 app = Flask(__name__)
@@ -145,9 +88,11 @@ def validateJWT():
     #     return jsonify({'message': 'Erro, Token Inválido'}), 401
 
     if request.method == 'POST':
-        Navio(request.form['nome'], request.form['quantidade_poroes'], request.form['comprimento_trapezio_proa'], request.form['comprimento_retangular_proa'], request.form['comprimento_trapezio_popa'], request.form['comprimento_retangular_popa'], request.form['largura_popa'], request.form['largura_proa'], request.form['meia_nau'], request.form['tank_top'], request.form['comprimentos_poroes'], request.form['larguras_escotilhas'], request.form['comprimentos_escotilhas'], request.files['file'])
+        navio = Navio(request.form['nome'], request.form['quantidade_poroes'], request.form['comprimento_trapezio_proa'], request.form['comprimento_retangular_proa'], request.form['comprimento_trapezio_popa'], request.form['comprimento_retangular_popa'], request.form['largura_popa'], request.form['largura_proa'], request.form['meia_nau'], request.form['tank_top'], request.form['comprimentos_poroes'], request.form['larguras_escotilhas'], request.form['comprimentos_escotilhas'])
+        # x = request.files
         
-        print('navio', Navio.nome)
+        print('navio: ', navio.nome)
+        # print('arquivo: ', arquivo.filename)
         # print('navio',Navio.getlargura_escotilhas())
         # print('navio',Navio.getFile())
         # validatePost(Navio)
@@ -160,18 +105,8 @@ def validateJWT():
 
 
 # -------------------------------- Rotas de Envio de informação para o cargoPlan --------------------------------
-def validatePost(body):
-    if not body['width']:
-        return jsonify({'message': 'Erro, Você deve enviar a largura'}), 400
-    if not body['height']:
-        return jsonify({'message': 'Erro, Você deve enviar o comprimento'}), 400
-
-    createCargoPlan(body)
-
 
 def createCargoPlan(body):
-    width = body['width']
-    height = body['height']
     # file = body['file']
 
     # file_name = 'inputs.csv'
@@ -182,9 +117,6 @@ def createCargoPlan(body):
 
     # file_path = os.path.join(app.config['UPLOAD_PATH'], file_name)
     # file.save(file_path)
-
-    print('largura: ',width)
-    print('comprimento: ',height)
 
     return jsonify({'message': 'CargoPlan criado com sucesso'}), 200
 
